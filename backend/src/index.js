@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const routes = require('./routes');
+const cors = require('cors');
 
 const app = express();
 
@@ -9,6 +10,7 @@ mongoose.connect('mongodb+srv://omnistack:omnistack@cluster0-tqcer.mongodb.net/t
     useNewUrlParser: true
 });
 
+app.use(cors());
 app.use(express.json()); //making express understand requests that uses json (must be use before routes are defined)
 app.use(routes);
 

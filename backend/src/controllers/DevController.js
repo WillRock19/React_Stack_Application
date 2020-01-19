@@ -16,6 +16,7 @@ module.exports = {
             return response.json({ sucesso: false, mensagem: 'User already exists!' });
         }
 
+        const techsForSaving = techs.split(',').map(tech => tech.trim());
         const result = await axios.get(`https://api.github.com/users/${github_username}`);
         const { name = login, avatar_url, bio } = result.data;
         const location = {
@@ -28,7 +29,7 @@ module.exports = {
             name,
             avatar_url,
             bio, 
-            techs,
+            techs: techsForSaving,
             location
         });
         return response.json({ sucesso: true, cadastrado: devCadastrado });
