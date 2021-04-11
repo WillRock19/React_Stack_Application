@@ -18,12 +18,19 @@ module.exports = {
 
         const techsForSaving = techs.split(',').map(tech => tech.trim());
         const result = await axios.get(`https://api.github.com/users/${github_username}`);
+
+        console.log("Dados do servidor do github: ", result.data);
+
         const { name = login, avatar_url, bio } = result.data;
         const location = {
             type: 'Point',
             coordinates: [longitude, latitude]
         };
     
+        console.log("Dados do name: ", name);
+        console.log("Dados do login: ", result.data.login);
+
+
         const devCadastrado = await Dev.create({
             github_username,
             name,

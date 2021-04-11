@@ -8,6 +8,7 @@ import apiCaller from './services/apiCaller';
 
 function App() {
 
+  const [devs, setDevs] = useState([]);
   const [github_username, setGithubUsername] = useState('');
   const [techs, setTechs] = useState('');
   const [latitude, setLatitude] = useState('');
@@ -16,7 +17,6 @@ function App() {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(position);
         const { latitude, longitude } = position.coords;
 
         setLatitude(latitude);
@@ -25,6 +25,14 @@ function App() {
       (error) => {
         console.log(error);
     });
+  }, []);
+
+  useEffect(() => {
+    async function loadDevs(){
+      const response = await apiCaller.get('/');
+      setDevs(response.data);
+    }
+    loadDevs();
   }, []);
 
   async function handleAddDeveloper(event){
@@ -37,7 +45,12 @@ function App() {
       longitude
     });
 
-    console.log(response.data);
+    setGithubUsername('');
+    setTechs('');
+
+    console.log('Os dados do dev salvo: ', response.data);
+
+    setDevs([...devs, response.data.cadastrado]);
   }
 
   return (
@@ -94,50 +107,19 @@ function App() {
       </aside>
       <main>
         <ul>
-          <li className="dev-info">
-            <header>
-              <img src="https://avatars2.githubusercontent.com/u/6953687?s=460&v=4" alt="imagem do will" />
-              <div className="user-details">
-                <strong>William Porto</strong>
-                <span>React, DotNet Core, React Native</span>
-              </div>
-            </header>            
-            <p>Program Enginneer at Dasko Ltda. Apaixonado por escrita e desafios no desenvolvimento dos códigos da vida</p>
-            <a href="https://github.com/WillRock19">Acessar Github</a>
-          </li>
-          <li className="dev-info">
-            <header>
-              <img src="https://avatars2.githubusercontent.com/u/6953687?s=460&v=4" alt="imagem do will" />
-              <div className="user-details">
-                <strong>William Porto</strong>
-                <span>React, DotNet Core, React Native, Java</span>
-              </div>
-            </header>            
-            <p>Program Enginneer at Dasko Ltda. Apaixonado por escrita e desafios no desenvolvimento dos códigos da vida</p>
-            <a href="https://github.com/WillRock19">Acessar Github</a>
-          </li>
-          <li className="dev-info">
-            <header>
-              <img src="https://avatars2.githubusercontent.com/u/6953687?s=460&v=4" alt="imagem do will" />
-              <div className="user-details">
-                <strong>William Porto</strong>
-                <span>React, DotNet Core, React Native, Java</span>
-              </div>
-            </header>            
-            <p>Program Enginneer at Dasko Ltda. Apaixonado por escrita e desafios no desenvolvimento dos códigos da vida</p>
-            <a href="https://github.com/WillRock19">Acessar Github</a>
-          </li>
-          <li className="dev-info">
-            <header>
-              <img src="https://avatars2.githubusercontent.com/u/6953687?s=460&v=4" alt="imagem do will" />
-              <div className="user-details">
-                <strong>William Porto</strong>
-                <span>React, DotNet Core, React Native, Java</span>
-              </div>
-            </header>            
-            <p>Program Enginneer at Dasko Ltda. Apaixonado por escrita e desafios no desenvolvimento dos códigos da vida</p>
-            <a href="https://github.com/WillRock19">Acessar Github</a>
-          </li>
+          {devs.map(dev => (
+            <li key={dev._id} className="dev-info">
+              <header>
+                <img src={dev.avatar_url} alt={dev.name} />
+                <div className="user-details">
+                  <strong>{dev.name}}</strong>
+                  <span>{dev.techs.join(', ')}</span>
+                </div>
+              </header>            
+              <p>{dev.bio}</p>
+              <a href={`https://github.com/${dev.github_username}`}>Acessar Github</a>
+            </li>
+          ))}
         </ul>
       </main>
     </section>
